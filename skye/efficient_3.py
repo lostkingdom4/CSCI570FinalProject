@@ -42,6 +42,7 @@ def writeIntoFIle(results, fileName):
         f.writelines("%s\n" % string for string in results)
 
 
+
 def efficient_solution(seq1, seq2, cost_matrix):
     # Lengths of input sequences
     m = len(seq1)
@@ -50,9 +51,9 @@ def efficient_solution(seq1, seq2, cost_matrix):
     # Initialize the previous row of the DP matrix
     prev_row = [i * cost_matrix["_" + seq2[0]] for i in range(n + 1)]
     
-    # Initialize variables to store the current row and the previous diagonal value
+    # Initialize variables to store the current row and the previous diagonalonal value
     current_row = [0] * (n + 1)
-    prev_diagonal = 0
+    prev_diagonalonal = 0
     
     # Initialize traceback matrix
     traceback = [[None] * (n + 1) for _ in range(m + 1)]
@@ -64,23 +65,23 @@ def efficient_solution(seq1, seq2, cost_matrix):
         
         for j in range(1, n + 1):
             # Calculate the three values for the current step
-            diag = prev_row[j - 1] + cost_matrix[seq1[i - 1] + seq2[j - 1]]
-            up = prev_row[j] + cost_matrix[seq1[i - 1] + "_"]
-            left = current_row[j - 1] + cost_matrix["_" + seq2[j - 1]]
+            diagonal = prev_row[j - 1] + cost_matrix[seq1[i - 1] + seq2[j - 1]]
+            Y = prev_row[j] + cost_matrix[seq1[i - 1] + "_"]
+            X = current_row[j - 1] + cost_matrix["_" + seq2[j - 1]]
             
             # Choose the minimum value and update the current step
-            current_row[j] = min(diag, up, left)
+            current_row[j] = min(diagonal, Y, X)
             
             # Update the traceback matrix
-            if current_row[j] == diag:
-                traceback[i][j] = 'diag'
-            elif current_row[j] == up:
-                traceback[i][j] = 'up'
+            if current_row[j] == diagonal:
+                traceback[i][j] = 'diagonal'
+            elif current_row[j] == Y:
+                traceback[i][j] = 'Y'
             else:
-                traceback[i][j] = 'left'
+                traceback[i][j] = 'X'
         
-        # Update the previous diagonal value and the previous row
-        prev_diagonal = prev_row[0]
+        # Update the previous diagonalonal value and the previous row
+        prev_diagonalonal = prev_row[0]
         prev_row = current_row[:]
     
     # Traceback to find the alignment
@@ -88,12 +89,12 @@ def efficient_solution(seq1, seq2, cost_matrix):
     align2 = []
     i, j = m, n
     while i > 0 or j > 0:
-        if traceback[i][j] == 'diag':
+        if traceback[i][j] == 'diagonal':
             align1.append(seq1[i - 1])
             align2.append(seq2[j - 1])
             i -= 1
             j -= 1
-        elif traceback[i][j] == 'up':
+        elif traceback[i][j] == 'Y':
             align1.append(seq1[i - 1])
             align2.append('_')
             i -= 1
@@ -156,12 +157,5 @@ if __name__ == "__main__":
 
     # Measure memory consumption 
     mem_consumed =  process_memory()
-
-    print("Datapoint:", inputFileName)
-    print("Alignment Cost:", alignment_cost)
-    print("Aligned Sequence 1:", aligned_seq1)
-    print("Aligned Sequence 2:", aligned_seq2)
-    print("Running time:", time_taken, "ms")
-    print("Memory consumed:", mem_consumed, "KB")
 
     writeIntoFIle([alignment_cost, aligned_seq1, aligned_seq2, time_taken, mem_consumed], outputFileName)
