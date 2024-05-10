@@ -93,11 +93,11 @@ def calculate_alignment_cost(X, Y, delta, score):
     return dp[m][n],resultx[::-1],resulty[::-1],memory_consumed
 
 def time_wrapper(X, Y, delta, score):
-    start_time = time.time() 
-    score, x_a, y_a,memory_consumed = calculate_alignment_cost(X, Y, delta, score)
+    start_time = time.time()
+    cost, x_a, y_a, memory_consumed = calculate_alignment_cost(X, Y, delta, score)
     end_time = time.time()
     time_taken = (end_time - start_time)*1000 
-    return score, x_a, y_a, time_taken,memory_consumed
+    return cost, x_a, y_a, time_taken, memory_consumed
 
 def writeIntoFIle(results, fileName):
     with open(fileName, 'w') as f:
